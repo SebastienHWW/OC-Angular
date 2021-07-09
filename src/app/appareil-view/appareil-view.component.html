@@ -17,3 +17,12 @@
 <button class="btn btn danger"        
       [disabled]="!isAuth"
       (click)="switchOffAll()">Tout Éteindre</button>
+
+
+<button class="btn btn-primary"        
+      [disabled]="!isAuth"
+      (click)="onSave()">Sauvegarder FireBase</button>
+
+<button class="btn btn-primary"        
+      [disabled]="!isAuth"
+      (click)="onFetch()">Get From FireBase</button>

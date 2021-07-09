@@ -1,11 +1,15 @@
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import {Subject} from 'rxjs'
 
+@Injectable()
 export class AppareilService {
 
   appareilSubject = new Subject<any[]>();
 
-    private appareils = [
-        {
+   /* private appareils = [
+      
+         {
           id: 1,
           name: "Machine à laver",
           status: "Allumé"
@@ -19,10 +23,10 @@ export class AppareilService {
           id:3,
           name: "PC Seb",
           status: "Allumé"
-        }
-        ]
-
-      constructor() { }
+        } 
+        ]*/
+        private appareils = [];
+      constructor(private httpClient: HttpClient) { }
     
     // Dès que cette méthode emitAppareilSubject reçoit des nouvelles données, elle émet des données par le Subject
     // et met à jour les composants qui utilisent appareils 
@@ -37,11 +41,9 @@ export class AppareilService {
             }
           
             switchOffAll() {
-                if(confirm("Tout éteindre ?")) {
               for(let appareil of this.appareils) {
                 appareil.status = 'Éteint';
               } 
-            }
             }
         
         switchOn(i: number){
@@ -74,4 +76,34 @@ export class AppareilService {
           this.emitAppareilSubject();
           //this.appareils.push
         }
+
+
+        saveAppareilsToServer(){
+          this.httpClient
+          .post('https://oc-interserveur-default-rtdb.europe-west1.firebasedatabase.app/appareils.json', this.appareils )
+          .subscribe(
+            () => {
+              console.log('Enregistrement terminé');
+              
+            }, (error) => {
+              console.log('Erreur: ' + error);
+              
+            }
+          )
+        }
+
+        getAppareilsFromServer(){
+          this.httpClient
+          .get<any[]>('https://oc-interserveur-default-rtdb.europe-west1.firebasedatabase.app/appareils.json')
+          .subscribe(
+            (response) => {
+              this.appareils = response;
+              this.emitAppareilSubject();
+            }, (error) => {
+              console.log('Erreur: ' + error);
+              
+            }
+          )
+        }
+
 }
